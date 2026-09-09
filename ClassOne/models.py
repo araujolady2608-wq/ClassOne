@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User  # Importar el modelo de usuario de Django
 
 # Enum
 
@@ -153,6 +154,8 @@ class Teacher(models.Model):
 class SchoolAdministrator(models.Model):
     role = models.CharField(max_length=50, choices=RoleStaff.choices)
     person = models.OneToOneField(Person, on_delete=models.CASCADE, db_column='person_id', unique=True)
+    # Conectar con el sistema de usuarios de Django (auth_user)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, db_column='user_id', blank=True, null=True)
 
     class Meta:
         db_table = 'school_administrators'

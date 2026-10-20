@@ -1,0 +1,150 @@
+<div class="p-4">
+  
+  <div class="d-flex justify-content-between align-items-center bg-white p-3 border rounded shadow-sm mb-4">
+    <h4 class="text-secondary fw-bold mb-0">Administradores (Rector - Coordinadores)</h4>
+    <button class="btn btn-primary fw-bold" (click)="abrirModalCrear()">+ Asignar Admin</button>
+  </div>
+
+  <div class="bg-light p-3 border rounded mb-4">
+    <div class="row">
+      <div class="col-md-6">
+        <label class="form-label fw-semibold text-secondary small mb-1">Buscar por ID, Rol o Persona:</label>
+        <input type="text" class="form-control bg-white" placeholder="Ej. Rector..." [(ngModel)]="searchTerm" (keyup)="onSearch()">
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive shadow-sm rounded">
+    <table class="table table-hover align-middle mb-0 bg-white border-bottom">
+      <thead class="table-dark">
+        <tr>
+          <th class="ps-4 py-3">ID Admin</th>
+          <th>Rol</th>
+          <th>ID Persona Vinculada</th>
+          <th class="text-center">Estado</th>
+          <th class="text-center pe-4">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of filteredAdministrators">
+          <td class="ps-4 py-3 fw-bold text-secondary">#{{ item.id }}</td>
+          <td class="fw-bold text-primary">{{ item.role }}</td>
+          <td class="fw-semibold">Persona ID: {{ item.person }}</td>
+          <td class="text-center">
+            <span class="badge" [ngClass]="item.is_active ? 'bg-success' : 'bg-secondary'">{{ item.is_active ? 'Activo' : 'Inactivo' }}</span>
+          </td>
+          <td class="text-center pe-4">
+            <button class="btn btn-info btn-sm me-1 text-white shadow-sm" (click)="viewAdministrator(item)" style="width: 32px; height: 32px; border-radius: 8px;">👁️</button>
+            <button class="btn btn-warning btn-sm me-1 text-white shadow-sm" (click)="abrirModalEditar(item)" style="width: 32px; height: 32px; border-radius: 8px;">✏️</button>
+            <button class="btn btn-danger btn-sm text-white shadow-sm" (click)="deleteAdministrator(item.id!)" style="width: 32px; height: 32px; border-radius: 8px;">✖</button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredAdministrators.length === 0">
+          <td colspan="5" class="text-center py-4 text-muted">No se encontraron registros.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+ <!-- Barra de Paginación -->
+  <div class="bg-white p-3 border rounded shadow-sm mt-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+    
+    <!-- Lado Izquierdo: Información -->
+    <div class="d-flex align-items-center gap-3 text-secondary small">
+      <span class="fw-semibold">Total {{ totalCount }} resultados</span>
+      <span>Pág. {{ currentPage }}/{{ totalPages }}</span>
+    </div>
+
+    <!-- Centro: Botones de navegación -->
+    <div class="btn-group shadow-sm" role="group">
+      <button type="button" class="btn btn-light border btn-sm text-secondary px-3" [disabled]="currentPage === 1" (click)="goToPage(1)">«</button>
+      <button type="button" class="btn btn-light border btn-sm text-secondary px-3" [disabled]="!previousUrl" (click)="goToPage(currentPage - 1)">‹</button>
+      
+      <ng-container *ngFor="let p of visiblePages">
+        <button *ngIf="p !== '...'" type="button" class="btn btn-sm border px-3" [ngClass]="p === currentPage ? 'btn-primary text-white fw-bold' : 'btn-light text-secondary'" (click)="goToPage(+p)">{{ p }}</button>
+        <span *ngIf="p === '...'" class="btn btn-light border btn-sm disabled text-secondary px-3">...</span>
+      </ng-container>
+      
+      <button type="button" class="btn btn-light border btn-sm text-secondary px-3" [disabled]="!nextUrl" (click)="goToPage(currentPage + 1)">›</button>
+      <button type="button" class="btn btn-light border btn-sm text-secondary px-3" [disabled]="currentPage === totalPages" (click)="goToPage(totalPages)">»</button>
+    </div>
+
+    <!-- Lado Derecho: Ir a página específica -->
+    <div class="d-flex align-items-center gap-2 text-secondary small">
+      <span>Ir a</span>
+      <input type="number" class="form-control form-control-sm text-center border shadow-sm" style="width: 60px;" [(ngModel)]="jumpPageInput" (keyup.enter)="jumpToPage()" min="1" [max]="totalPages">
+    </div>
+    
+  </div>
+
+<!-- (MANTÉN TUS MODALES AQUÍ DEBAJO) -->
+
+<!-- === MODAL CREAR === -->
+<div class="modal fade" tabindex="-1" [class.show]="mostrarModalCrear" [style.display]="mostrarModalCrear ? 'block' : 'none'" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold text-primary">Asignar Administrador</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalCrear()"></button>
+      </div>
+      <div class="modal-body px-4 py-4">
+        <div class="mb-3">
+          <label class="form-label text-muted small fw-semibold mb-1">Seleccionar Persona *</label>
+          <!-- MENÚ DESPLEGABLE -->
+          <select class="form-select bg-white" [(ngModel)]="nuevoAdmin.person">
+            <option [ngValue]="null" disabled>-- Seleccione una persona --</option>
+            <option *ngFor="let p of personasDisponibles" [value]="p.id">
+              {{ p.name1 }} {{ p.last_name1 }} (DNI: {{ p.dni }})
+            </option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-muted small fw-semibold mb-1">Rol *</label>
+          <select class="form-select bg-white" [(ngModel)]="nuevoAdmin.role">
+            <option value="Coordinador">Coordinador</option>
+            <option value="Rector">Rector</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+        <button type="button" class="btn btn-light fw-semibold rounded-pill px-4" (click)="cerrarModalCrear()">Cancelar</button>
+        <button type="button" class="btn btn-primary fw-bold rounded-pill px-4 shadow-sm" (click)="guardarNuevoAdmin()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- === MODAL EDITAR === -->
+<div class="modal fade" tabindex="-1" [class.show]="mostrarModalEditar" [style.display]="mostrarModalEditar ? 'block' : 'none'" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold text-warning">Editar Administrador</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalEditar()"></button>
+      </div>
+      <div class="modal-body px-4 py-4">
+        <div class="mb-3">
+          <label class="form-label text-muted small fw-semibold mb-1">Cambiar Persona Vinculada *</label>
+          <!-- MENÚ DESPLEGABLE -->
+          <select class="form-select bg-white" [(ngModel)]="adminAEditar.person">
+            <option [ngValue]="null" disabled>-- Seleccione una persona --</option>
+            <option *ngFor="let p of personasDisponibles" [value]="p.id">
+              {{ p.name1 }} {{ p.last_name1 }} (DNI: {{ p.dni }})
+            </option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-muted small fw-semibold mb-1">Rol *</label>
+          <select class="form-select bg-white" [(ngModel)]="adminAEditar.role">
+            <option value="Coordinador">Coordinador</option>
+            <option value="Rector">Rector</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+        <button type="button" class="btn btn-light fw-semibold rounded-pill px-4" (click)="cerrarModalEditar()">Cancelar</button>
+        <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow-sm" (click)="guardarEdicionAdmin()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,80 @@
+<!-- ========================================== -->
+<!-- 1. VISTAS PÚBLICAS (Landing, Login, etc.)  -->
+<!-- ========================================== -->
+<ng-container *ngIf="isPublicRoute()">
+  <!-- Aquí solo se inyecta la página limpia, sin menú lateral ni header -->
+  <router-outlet></router-outlet>
+</ng-container>
+
+<!-- ========================================== -->
+<!-- 2. VISTAS PRIVADAS (Dashboard y Módulos)   -->
+<!-- ========================================== -->
+<div *ngIf="!isPublicRoute()" class="d-flex min-vh-100" style="background-color: #f3f4f6f8;">
+  
+  <!-- Sidebar Elegante (Púrpura institucional) que se queda fijo -->
+  <aside class="text-white d-flex flex-column shadow-lg" style="width: 260px; background-color: #1f1fa2; position: sticky; top: 0; height: 100vh;">
+    <div class="p-4 text-center border-bottom border-light border-opacity-25">
+      <div class="bg-white rounded-circle d-inline-flex justify-content-center align-items-center mb-2 shadow" style="width: 50px; height: 50px;">
+        <span class="text-primary fw-bold fs-4">IE</span>
+      </div>
+      <h5 class="fw-bold mb-0">IEMEP Admin</h5>
+    </div>
+    
+    <nav class="nav flex-column p-3">
+      <!-- Opción Dashboard -->
+      <a class="nav-link text-white opacity-75 mb-2" routerLink="/admin-dashboard" routerLinkActive="menu-activo" [routerLinkActiveOptions]="{exact: true}" style="cursor: pointer; transition: 0.3s;">
+        <span class="me-2">📊</span> Dashboard
+      </a>
+      
+      <!-- Opción Materias -->
+      <a class="nav-link text-white opacity-75 mb-2" routerLink="/subjects" routerLinkActive="menu-activo" style="cursor: pointer; transition: 0.3s;">
+        <span class="me-2">📚</span> Materias (Subjects)
+      </a>
+      
+      <!-- Opción Usuarios -->
+      <a class="nav-link text-white opacity-75 mb-2" routerLink="/gestion-usuarios" routerLinkActive="menu-activo" style="cursor: pointer; transition: 0.3s;">
+        <span class="me-2">👤</span> Gestión de Usuarios
+      </a>
+
+      <!-- Opción Personas -->
+      <a class="nav-link text-white opacity-75 mb-2" routerLink="/persons" routerLinkActive="menu-activo" style="cursor: pointer; transition: 0.3s;">
+        <span class="me-2">🏫</span> Gestión de Personas
+      </a>
+
+      <!-- Opción Profesores -->
+      <a class="nav-link text-white opacity-75 mb-2" routerLink="/teachers" routerLinkActive="menu-activo" style="cursor: pointer; transition: 0.3s;">
+        <span class="me-2">👨‍🏫</span> Profesores
+      </a>
+
+      <!-- Opción Administradores -->
+      <a class="nav-link text-white opacity-75 mb-2" routerLink="/school-administrators" routerLinkActive="menu-activo" style="cursor: pointer; transition: 0.3s;">
+        <span class="me-2">🕵️‍♂️</span> Administradores
+      </a>
+
+      <!-- Opción Horarios -->
+      <a class="nav-link text-white opacity-75 mb-2" routerLink="/schedules" routerLinkActive="menu-activo" style="cursor: pointer; transition: 0.3s;">
+        <span class="me-2">📅</span> Horarios (Schedules)
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Contenedor Principal -->
+  <main class="flex-grow-1 d-flex flex-column">
+    
+    <!-- Header Superior (También se queda fijo en todas las pantallas) -->
+    <header class="bg-white shadow-sm px-4 py-3 d-flex justify-content-between align-items-center mb-4">
+      <div class="d-flex align-items-center">
+        <h5 class="mb-0 text-muted fw-bold">Panel de Administración</h5>
+      </div>
+      <div class="d-flex align-items-center">
+        <span class="me-3 fw-semibold text-dark">👤 Administrador General</span>
+        <!-- Este botón cierra sesión y te devuelve al inicio -->
+        <button class="btn btn-outline-danger btn-sm rounded-pill px-3" routerLink="/">Cerrar Sesión</button>
+      </div>
+    </header>
+
+    <!-- LA PANTALLA DEL TELEVISOR: Aquí Angular inyectará el Dashboard o el CRUD -->
+    <router-outlet></router-outlet>
+    
+  </main>
+</div>

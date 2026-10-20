@@ -1,0 +1,229 @@
+<div class="container mt-4">
+  
+  <!-- Título del Panel Modificado (Sin emoji y con botón azul) -->
+  <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-light rounded shadow-sm border">
+    <h4 class="fw-bold text-secondary mb-0">Horarios de Profesores</h4>
+    <button class="btn btn-primary fw-bold shadow-sm" (click)="abrirModalCrear()">+ Nuevo Horario</button>
+  </div>
+
+<!-- Sección de Filtros Combinados -->
+  <div class="card p-3 mb-4 shadow-sm border-0 bg-light">
+    <div class="row g-3 align-items-center">
+      
+      <!-- 1. Filtro por Día -->
+      <div class="col-md-4">
+        <label class="form-label fw-semibold text-secondary small mb-1">Filtrar por Día:</label>
+        <select 
+          class="form-select border-primary shadow-sm" 
+          [(ngModel)]="selectedDayFilter" 
+          (change)="applyFilter()">
+          <option value="">-- Todos los días --</option>
+          <option value="Lunes">Lunes</option>
+          <option value="Martes">Martes</option>
+          <option value="Miércoles">Miércoles</option>
+          <option value="Jueves">Jueves</option>
+          <option value="Viernes">Viernes</option>
+        </select>
+      </div>
+
+      <!-- 2. Búsqueda por Profesor -->
+      <div class="col-md-4">
+        <label class="form-label fw-semibold text-secondary small mb-1">Buscar por Profesor (ID):</label>
+        <input 
+          type="text" 
+          class="form-control shadow-sm" 
+          placeholder="Ej. 1" 
+          [(ngModel)]="selectedTeacherFilter" 
+          (keyup)="applyFilter()">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Tabla de Horarios -->
+  <div class="card shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th>ID Horario</th>
+            <th>Día de la Semana</th>
+            <th>Curso (ID)</th>
+            <th>Bloque Horario (ID)</th>
+            <th>Profesor (ID)</th>
+            <th class="text-center">Estado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredSchedules">
+            <td>{{ item.id }}</td>
+            <td>
+              <span class="badge bg-info text-dark">🗓️ {{ item.day_week }}</span>
+            </td>
+            <td>Curso #{{ item.course }}</td>
+            <td>Bloque #{{ item.classtime }}</td>
+            <td>Profesor #{{ item.teacher }}</td>
+            <td class="text-center">
+              <span class="badge" [ngClass]="item.is_active ? 'bg-success' : 'bg-secondary'">
+                {{ item.is_active ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td class="text-center">
+              <!-- Botón Ver -->
+              <button class="btn btn-info btn-sm me-2 text-white shadow-sm d-inline-flex justify-content-center align-items-center" 
+                      title="Ver detalle" 
+                      (click)="viewDetail(item)"
+                      style="width: 38px; height: 38px; border-radius: 8px; background-color: #00bcd4; border: none;">
+                👁️
+              </button>
+              
+              <!-- Botón Editar -->
+              <button class="btn btn-warning btn-sm me-2 text-white shadow-sm d-inline-flex justify-content-center align-items-center" 
+                      title="Editar" 
+                      (click)="openEditModal(item)"
+                      style="width: 38px; height: 38px; border-radius: 8px; background-color: #ffb300; border: none;">
+                ✏️
+              </button>
+              
+              <!-- Botón Eliminar -->
+              <button class="btn btn-danger btn-sm text-white shadow-sm d-inline-flex justify-content-center align-items-center" 
+                      title="Desactivar" 
+                      (click)="deleteSchedule(item.id!)"
+                      style="width: 38px; height: 38px; border-radius: 8px; background-color: #e53935; border: none;">
+                ✖
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredSchedules.length === 0">
+            <td colspan="7" class="text-center py-4 text-muted">No se encontraron horarios registrados para este día.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Barra de Paginación Avanzada -->
+  <div class="card mt-3 p-3 shadow-sm border-0 bg-light d-flex flex-row justify-content-between align-items-center flex-wrap gap-2">
+    
+    <div class="d-flex align-items-center gap-3">
+      <span class="fw-semibold text-secondary">Total {{ totalCount }} resultados</span>
+      <span class="text-muted">Pág. {{ currentPage }}/{{ totalPages }}</span>
+    </div>
+
+    <div class="btn-group" role="group" aria-label="Paginación">
+      <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="currentPage === 1" (click)="goToPage(1)" title="Primera página">⟪</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="!previousUrl" (click)="goToPage(currentPage - 1)" title="Anterior">⟨</button>
+      
+      <ng-container *ngFor="let p of visiblePages">
+        <button *ngIf="p !== '...'" type="button" class="btn btn-sm" [ngClass]="p === currentPage ? 'btn-primary' : 'btn-outline-secondary'" (click)="goToPage(+p)">
+          {{ p }}
+        </button>
+        <span *ngIf="p === '...'" class="btn btn-outline-secondary btn-sm disabled px-2">...</span>
+      </ng-container>
+
+      <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="!nextUrl" (click)="goToPage(currentPage + 1)" title="Siguiente">⟩</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="currentPage === totalPages" (click)="goToPage(totalPages)" title="Última página">⟫</button>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <span class="text-muted small">Ir a</span>
+      <input type="number" class="form-control form-control-sm text-center" style="width: 60px;" [(ngModel)]="jumpPageInput" (keyup.enter)="jumpToPage()" min="1" [max]="totalPages">
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ============================================== -->
+<!-- MODALES (CREAR Y EDITAR) -->
+<!-- ============================================== -->
+
+<!-- === MODAL PARA CREAR NUEVO HORARIO === -->
+<div class="modal fade" tabindex="-1" [class.show]="mostrarModalCrear" [style.display]="mostrarModalCrear ? 'block' : 'none'" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold text-primary">Registrar Nuevo Horario</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalCrear()"></button>
+      </div>
+      <div class="modal-body px-4 py-4">
+        <form>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-semibold mb-1">Día de la Semana</label>
+              <select class="form-select bg-white" name="new_dia" [(ngModel)]="nuevoHorario.day_week">
+                <option value="" disabled selected>Seleccione un día</option>
+                <option value="Lunes">Lunes</option>
+                <option value="Martes">Martes</option>
+                <option value="Miércoles">Miércoles</option>
+                <option value="Jueves">Jueves</option>
+                <option value="Viernes">Viernes</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-semibold mb-1">Bloque Horario (ID)</label>
+              <input type="text" class="form-control bg-white" name="new_bloque" [(ngModel)]="nuevoHorario.classtime" placeholder="Ej. 1">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label text-muted small fw-semibold mb-1">Profesor Asignado (ID)</label>
+              <input type="text" class="form-control bg-white" name="new_profesor" [(ngModel)]="nuevoHorario.teacher" placeholder="Ej. 5">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label text-muted small fw-semibold mb-1">Curso (ID)</label>
+              <input type="text" class="form-control bg-white" name="new_curso" [(ngModel)]="nuevoHorario.course" placeholder="Ej. 10">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+        <button type="button" class="btn btn-light fw-semibold rounded-pill px-4" (click)="cerrarModalCrear()">Cancelar</button>
+        <button type="button" class="btn btn-primary fw-bold rounded-pill px-4 shadow-sm" (click)="guardarNuevoHorario()">Guardar Horario</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- === MODAL PARA EDITAR HORARIO === -->
+<div class="modal fade" tabindex="-1" [class.show]="mostrarModalEditar" [style.display]="mostrarModalEditar ? 'block' : 'none'" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold text-warning">Editar Horario Asignado</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalEditar()"></button>
+      </div>
+      <div class="modal-body px-4 py-4">
+        <form>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-semibold mb-1">Día de la Semana</label>
+              <select class="form-select bg-white" name="edit_dia" [(ngModel)]="horarioAEditar.day_week">
+                <option value="Lunes">Lunes</option>
+                <option value="Martes">Martes</option>
+                <option value="Miércoles">Miércoles</option>
+                <option value="Jueves">Jueves</option>
+                <option value="Viernes">Viernes</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-semibold mb-1">Bloque Horario (ID)</label>
+              <input type="text" class="form-control bg-white" name="edit_bloque" [(ngModel)]="horarioAEditar.classtime">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label text-muted small fw-semibold mb-1">Profesor Asignado (ID)</label>
+              <input type="text" class="form-control bg-white" name="edit_profesor" [(ngModel)]="horarioAEditar.teacher">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label text-muted small fw-semibold mb-1">Curso (ID)</label>
+              <input type="text" class="form-control bg-white" name="edit_curso" [(ngModel)]="horarioAEditar.course">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+        <button type="button" class="btn btn-light fw-semibold rounded-pill px-4" (click)="cerrarModalEditar()">Cancelar</button>
+        <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow-sm" (click)="guardarEdicionHorario()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>

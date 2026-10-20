@@ -1,0 +1,241 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold text-dark mb-0">Gestión de Usuarios</h3>
+      <p class="text-muted small">Administración de docentes, coordinadores y personal administrativo.</p>
+    </div>
+    <button class="btn btn-primary fw-bold shadow-sm" (click)="abrirModalCrear()">+ Nuevo Usuario</button>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light text-secondary">
+            <tr>
+              <th class="ps-4">Nombre Completo</th>
+              <th>Correo Institucional</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th class="text-center pe-4">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ATENCIÓN: Cambiamos "usuarios" por "usuariosPaginados" -->
+            @for (user of usuariosPaginados; track user.id) {
+              <tr>
+                <td class="ps-4 fw-semibold text-dark">{{ user.nombre }}</td>
+                <td class="text-muted">{{ user.correo }}</td>
+                <td>
+                  <span class="badge" [ngClass]="{'bg-primary': user.rol === 'Coordinador' || user.rol === 'Rector', 'bg-info text-dark': user.rol === 'Docente', 'bg-secondary': user.rol === 'Sin Rol'}">
+                    {{ user.rol }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge rounded-pill" [ngClass]="{'bg-success': user.estado === 'Activo', 'bg-danger': user.estado === 'Inactivo'}">
+                    {{ user.estado }}
+                  </span>
+                </td>
+                <td class="text-center pe-4">
+                  <!-- Botón Ver (Cian) -->
+                  <button class="btn btn-sm btn-info text-white me-2 shadow-sm" (click)="verUsuario(user.id)" title="Ver Detalles">
+                    👁️
+                  </button>
+                  <!-- Botón Editar (Amarillo/Naranja) -->
+                  <button class="btn btn-sm btn-warning text-white me-2 shadow-sm" (click)="editarUsuario(user.id)" title="Editar">
+                    ✏️
+                  </button>
+                  <!-- Botón Eliminar/Desactivar (Rojo) -->
+                  <button class="btn btn-sm btn-danger text-white shadow-sm" (click)="eliminarUsuario(user.id)" title="Desactivar">
+                    ❌
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-center py-4 text-muted">Cargando usuarios...</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- === BARRA DE PAGINACIÓN EXACTA A TU IMAGEN === -->
+    <div *ngIf="totalResultados > 0" class="card-footer bg-white border-top d-flex justify-content-between align-items-center py-3 px-4">
+      
+      <!-- Lado Izquierdo: Resumen -->
+      <div class="text-muted small d-flex align-items-center">
+        <span class="me-3 fw-semibold">Total {{ totalResultados }} resultados</span>
+        <span>Pág. {{ paginaActual }}/{{ totalPaginas }}</span>
+      </div>
+      
+      <!-- Centro: Botones de Paginación -->
+      <nav>
+        <ul class="pagination pagination-sm mb-0 shadow-sm">
+          <li class="page-item" [class.disabled]="paginaActual === 1">
+            <button class="page-link text-secondary" (click)="cambiarPagina(1)">«</button>
+          </li>
+          <li class="page-item" [class.disabled]="paginaActual === 1">
+            <button class="page-link text-secondary" (click)="cambiarPagina(paginaActual - 1)">‹</button>
+          </li>
+          
+          @for (pag of obtenerArregloPaginas(); track pag) {
+            <li class="page-item" [class.active]="paginaActual === pag">
+              <button class="page-link" (click)="cambiarPagina(pag)">{{ pag }}</button>
+            </li>
+          }
+
+          <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+            <button class="page-link text-secondary" (click)="cambiarPagina(paginaActual + 1)">›</button>
+          </li>
+          <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+            <button class="page-link text-secondary" (click)="cambiarPagina(totalPaginas)">»</button>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Lado Derecho: Input Ir a -->
+      <div class="d-flex align-items-center small text-muted">
+        <span class="me-2">Ir a</span>
+        <input type="number" class="form-control form-control-sm text-center shadow-sm" style="width: 65px;" 
+               [value]="paginaActual" (change)="irAPagina($event)" min="1" [max]="totalPaginas">
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- === MODAL PARA GENERAR CREDENCIALES (Reemplazar el anterior) === -->
+<div class="modal fade" tabindex="-1" [class.show]="mostrarModalCrear" [style.display]="mostrarModalCrear ? 'block' : 'none'" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      
+      <!-- Encabezado -->
+      <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold text-primary">Generar Acceso al Sistema</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalCrear()"></button>
+      </div>
+
+      <!-- Cuerpo del Formulario -->
+      <div class="modal-body px-4 py-4">
+        
+        <!-- SELECTOR DE PERSONAL EXISTENTE -->
+        <div class="mb-4 p-3 bg-light rounded-3 border">
+          <label class="form-label text-dark fw-bold mb-2">1. Seleccionar Personal Registrado</label>
+          <select class="form-select border-primary shadow-sm" [(ngModel)]="personaSeleccionadaId" (change)="onSeleccionarPersona()">
+            <option value="" disabled selected>-- Elija un docente o directivo --</option>
+            @for (u of usuariosTotales; track u.id) {
+              <option [value]="u.id">{{ u.nombre }} ({{ u.rol }})</option>
+            }
+          </select>
+        </div>
+
+        <form *ngIf="personaSeleccionadaId">
+          <h6 class="fw-bold mb-3 text-secondary">2. Rectificar Datos y Generar</h6>
+          <div class="row g-3">
+            <!-- DNI -->
+            <div class="col-md-12">
+              <label class="form-label text-muted small fw-semibold mb-1">Documento de Identidad (DNI)</label>
+              <input type="text" class="form-control bg-white" name="dni" [(ngModel)]="nuevoUsuario.dni">
+            </div>
+
+            <!-- Nombres y Apellidos -->
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-semibold mb-1">Primer Nombre</label>
+              <input type="text" class="form-control bg-white" name="name1" [(ngModel)]="nuevoUsuario.name1">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-semibold mb-1">Primer Apellido</label>
+              <input type="text" class="form-control bg-white" name="last_name1" [(ngModel)]="nuevoUsuario.last_name1">
+            </div>
+
+            <!-- Correo -->
+            <div class="col-md-12">
+              <label class="form-label text-muted small fw-semibold mb-1">Correo Institucional (Será el Usuario)</label>
+              <input type="email" class="form-control bg-white" name="email" [(ngModel)]="nuevoUsuario.email">
+            </div>
+
+            <!-- Mensaje de Contraseña -->
+            <div class="col-md-12 mt-3">
+              <div class="alert alert-info py-2 small mb-0">
+                <strong>🔒 Información de Acceso:</strong> El sistema usará el correo como nombre de usuario y el <strong>DNI</strong> como contraseña temporal inicial.
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+        <button type="button" class="btn btn-light fw-semibold rounded-pill px-4" (click)="cerrarModalCrear()">Cancelar</button>
+        <button type="button" class="btn btn-primary fw-bold rounded-pill px-4 shadow-sm" [disabled]="!personaSeleccionadaId" (click)="guardarUsuario()">Crear Accesos</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- === MODAL PARA EDITAR USUARIO === -->
+<div class="modal fade" tabindex="-1" [class.show]="mostrarModalEditar" [style.display]="mostrarModalEditar ? 'block' : 'none'" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+
+      <!-- Encabezado -->
+      <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold text-warning">Editar Perfil del Usuario</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalEditar()"></button>
+      </div>
+
+      <!-- Cuerpo del Formulario -->
+      <div class="modal-body px-4 py-4">
+        <form>
+          <div class="row g-3">
+            
+            <!-- DNI (Bloqueado por seguridad) -->
+            <div class="col-md-12">
+              <label class="form-label text-muted small fw-semibold mb-1">Documento de Identidad (DNI)</label>
+              <!-- Le ponemos "disabled" porque el DNI no se debería poder cambiar tan fácil -->
+              <input type="text" class="form-control bg-light" name="edit_dni" [(ngModel)]="usuarioAEditar.dni" disabled>
+            </div>
+
+            <!-- Nombres y Apellidos -->
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-semibold mb-1">Primer Nombre</label>
+              <input type="text" class="form-control bg-white" name="edit_name1" [(ngModel)]="usuarioAEditar.name1">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted small fw-semibold mb-1">Primer Apellido</label>
+              <input type="text" class="form-control bg-white" name="edit_last_name1" [(ngModel)]="usuarioAEditar.last_name1">
+            </div>
+
+            <!-- Correo -->
+            <div class="col-md-12">
+              <label class="form-label text-muted small fw-semibold mb-1">Correo Institucional</label>
+              <input type="email" class="form-control bg-white" name="edit_email" [(ngModel)]="usuarioAEditar.email">
+            </div>
+
+            <!-- Rol -->
+            <div class="col-md-12">
+              <label class="form-label text-muted small fw-semibold mb-1">Asignar Rol</label>
+              <select class="form-select bg-white" name="edit_rol" [(ngModel)]="usuarioAEditar.rol">
+                <option value="Docente">Docente</option>
+                <option value="Coordinador">Coordinador</option>
+                <option value="Rector">Rector</option>
+                <option value="Sin Rol">Sin Rol</option>
+              </select>
+            </div>
+
+          </div>
+        </form>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+        <button type="button" class="btn btn-light fw-semibold rounded-pill px-4" (click)="cerrarModalEditar()">Cancelar</button>
+        <button type="button" class="btn btn-warning text-dark fw-bold rounded-pill px-4 shadow-sm" (click)="guardarEdicion()">Guardar Cambios</button>
+      </div>
+
+    </div>
+  </div>
+</div>

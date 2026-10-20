@@ -1,0 +1,113 @@
+<div class="container-fluid px-4">
+  <!-- Tarjetas Estadísticas con colores institucionales -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card text-white border-0 shadow-sm rounded-3 h-100" style="background-color: #607d8b;"> <!-- Gris azulado -->
+        <div class="card-body">
+          <!-- Variable dinámica: Profesores -->
+          <h2 class="fw-bold mb-0">{{ estadisticas.profesores }}</h2>
+          <h6 class="mb-0 opacity-75">Profesores</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white border-0 shadow-sm rounded-3 h-100" style="background-color: #5c6bc0;"> <!-- Índigo -->
+        <div class="card-body">
+          <!-- Variable dinámica: Materias -->
+          <h2 class="fw-bold mb-0">{{ estadisticas.materiasActivas }}</h2>
+          <h6 class="mb-0 opacity-75">Materias Activas</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white border-0 shadow-sm rounded-3 h-100" style="background-color: #004d96;"> <!-- Cerceta -->
+        <div class="card-body">
+          <!-- Variable dinámica: Bloques de Asistencia -->
+          <h2 class="fw-bold mb-0">{{ estadisticas.bloquesAsistencia }}</h2>
+          <h6 class="mb-0 opacity-75">Registros de Horarios</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white border-0 shadow-sm rounded-3 h-100" style="background-color: #4d40db;"> <!-- Morado -->
+        <div class="card-body">
+          <!-- Variable dinámica: Cursos -->
+          <h2 class="fw-bold mb-0">{{ estadisticas.cursos }}</h2>
+          <h6 class="mb-0 opacity-75">Cursos (Grupos)</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- SECCIÓN GRÁFICAS: Análisis Cualitativo -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-white border-0 pt-4 pb-0">
+          <h6 class="fw-bold text-dark mb-0">Horarios por Día</h6>
+        </div>
+        <div class="card-body d-flex align-items-end justify-content-around pt-5" style="height: 250px;">
+          <!-- Barras dinámicas: Su altura (height) ahora depende de la base de datos -->
+          <div class="text-center">
+            <div class="rounded-top" [style.height.px]="graficaHorarios.lun" style="background-color: #c5cae9; width: 40px; transition: height 0.5s ease-in-out;"></div>
+            <small class="text-muted fw-bold mt-2 d-block">Lun</small>
+          </div>
+          <div class="text-center">
+            <div class="rounded-top" [style.height.px]="graficaHorarios.mar" style="background-color: #9fa8da; width: 40px; transition: height 0.5s ease-in-out;"></div>
+            <small class="text-muted fw-bold mt-2 d-block">Mar</small>
+          </div>
+          <div class="text-center">
+            <div class="rounded-top" [style.height.px]="graficaHorarios.mie" style="background-color: #7986cb; width: 40px; transition: height 0.5s ease-in-out;"></div>
+            <small class="text-muted fw-bold mt-2 d-block">Mié</small>
+          </div>
+          <div class="text-center">
+            <div class="rounded-top" [style.height.px]="graficaHorarios.jue" style="background-color: #5c6bc0; width: 40px; transition: height 0.5s ease-in-out;"></div>
+            <small class="text-muted fw-bold mt-2 d-block">Jue</small>
+          </div>
+          <div class="text-center">
+            <div class="rounded-top" [style.height.px]="graficaHorarios.vie" style="background-color: #3f51b5; width: 40px; transition: height 0.5s ease-in-out;"></div>
+            <small class="text-muted fw-bold mt-2 d-block">Vie</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN DE REGISTROS (Última Actividad Dinámica) -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm rounded-4 h-100">
+        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+          <h6 class="mb-0 fw-bold text-dark">Última Actividad del Sistema</h6>
+          <span class="badge bg-light text-dark border">Tiempo Real</span>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light text-muted small">
+                <tr>
+                  <th class="ps-4">Módulo</th>
+                  <th>Detalle del Registro</th>
+                  <th class="pe-4 text-end">Hora</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Bucle dinámico que crea una fila por cada actividad registrada -->
+                <tr *ngFor="let actividad of ultimasActividades">
+                  <td class="ps-4 fw-semibold text-secondary">{{ actividad.modulo }}</td>
+                  <td>{{ actividad.detalle }}</td>
+                  <td class="pe-4 text-end text-muted small">{{ actividad.tiempo }}</td>
+                </tr>
+                
+                <!-- Fila alternativa en caso de que no haya ninguna actividad -->
+                <tr *ngIf="ultimasActividades.length === 0">
+                  <td colspan="3" class="text-center py-4 text-muted">
+                    No se han registrado actividades recientes en el sistema.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

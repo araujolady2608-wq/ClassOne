@@ -1,0 +1,234 @@
+<!-- Barra de navegación pública -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm sticky-top" style="background-color: #0047AB;">
+  <div class="container">
+    <a class="navbar-brand fw-bold d-flex align-items-center" style="cursor: pointer;" (click)="cambiarVista('inicio')">
+      <!-- Logo Institucional agregado aquí -->
+     <img src="/assets/logo-iemep.png" alt="Logo Institucional" class="img-fluid rounded-4 shadow-sm w-40" style="max-height: 50px; object-fit: cover;">
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse ms-lg-4" id="menuPrincipal">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <!-- Botón Inicio -->
+        <li class="nav-item">
+          <a class="nav-link text-white" style="cursor: pointer;" [class.fw-bold]="vistaActual === 'inicio'" (click)="cambiarVista('inicio')">Inicio</a>
+        </li>
+        <!-- Menú Desplegable Institución -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" style="cursor: pointer;" [class.fw-bold]="vistaActual === 'institucion'" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+            Institución
+          </a>
+          <ul class="dropdown-menu shadow-sm border-0">
+            <li><a class="dropdown-item fw-semibold text-primary" style="cursor: pointer;" (click)="cambiarVista('institucion')">¿Quiénes somos? - Historia</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" style="cursor: pointer;" (click)="cambiarVista('institucion')">Misión y Visión</a></li>
+          </ul>
+        </li>
+        <!-- NUEVO: Botón Calendario Académico -->
+        <li class="nav-item">
+          <a class="nav-link text-white" style="cursor: pointer;" [class.fw-bold]="vistaActual === 'calendario'" (click)="cambiarVista('calendario')">Calendario Académico</a>
+        </li>
+      </ul>
+      <div class="d-flex">
+        <a class="btn btn-warning fw-bold px-4 rounded-pill shadow" routerLink="/login">Ingresar al Sistema 🔒</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ========================================== -->
+<!-- VISTA 1: INICIO -->
+<!-- ========================================== -->
+<div *ngIf="vistaActual === 'inicio'" class="bg-light py-5 shadow-sm border-bottom">
+  <div class="container my-4">
+    <div class="row align-items-center">
+      
+      <div class="col-lg-6 mb-5 mb-lg-0 text-center text-lg-start pe-lg-5">
+        <h1 class="display-5 fw-bold text-dark mb-3">Sistema de Gestión de Ausencias y Reemplazos Docentes</h1>
+        <p class="lead text-muted mb-4">Herramienta administrativa oficial para procurar la cobertura de clases y el control de disponibilidad docente en la Institución Educativa Manuel Elkin Patarroyo.</p>
+        
+        <div class="row mt-4 g-3">
+          <div class="col-12 col-md-4">
+            <div class="card text-white border-0 shadow-sm h-100" style="background-color: #b453c5; border-radius: 15px;">
+              <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
+                <h3 class="fw-bold mb-1">24 cursos</h3>
+                <small class="fw-semibold">Grados 6° a 11°</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="card text-white border-0 shadow-sm h-100" style="background-color: #ff6868; border-radius: 15px;">
+              <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
+                <h3 class="fw-bold mb-1">36</h3>
+                <small class="fw-semibold">Profesores</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="card text-white border-0 shadow-sm h-100" style="background-color: #59c55c; border-radius: 15px;">
+              <div class="card-body text-center p-3 d-flex flex-column justify-content-center">
+                <h4 class="fw-bold mb-0">6:30 am a 1:25 pm</h4>
+                <small class="fw-semibold">Jornada</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden p-2 bg-white">
+          <div class="card-header bg-white border-0 pb-2">
+            <h6 class="fw-bold text-dark mb-0"><span class="text-danger">📍</span> Sede Principal - Girardot</h6>
+          </div>
+          <div class="card-body p-1">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.0125431697956!2d-74.80806492501625!3d4.298418045610816!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f289cb1f67f67%3A0xe9f75f63459c3621!2sInstituci%C3%B3n%20educativa%20Manuel%20Elkin%20Patarroyo!5e0!3m2!1ses-419!2sco!4v1710000000000!5m2!1ses-419!2sco" width="100%" height="320" style="border:0; border-radius: 12px;" allowfullscreen="" loading="lazy"></iframe>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- VISTA 2: INSTITUCIÓN -->
+<!-- ========================================== -->
+<div *ngIf="vistaActual === 'institucion'" class="container py-5 my-3">
+  
+  <div class="text-center mb-5">
+    <h2 class="fw-bold text-dark">Nuestra Institución</h2>
+    <p class="text-muted">Conoce el contexto, los valores y la historia de la institución académica.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+        <h4 class="fw-bold text-primary mb-3">¿Quiénes somos?</h4>
+        <p class="text-muted" style="text-align: justify; line-height: 1.8;">
+          En el mes de enero de 2003, se dió inicio a un sueño, creado por los antiguos administrativos, docentes y directivos del Centro Auxiliar de Servicios Docentes CASD, quienes querían crear una institución educativa que ampliara sus servicios de cobertura en los niveles de preescolar, básica y media, con especialidades en Comercio, Salud y Ciencias Naturales. La Institución Educativa Manuel Elkin Patarroyo, nace como resultado de este sueño y la exigencia de la Ley 715, que precisa la formación de instituciones educativas, es así como el antiguo CASD se ve en la necesidad de presentar un proyecto que le permita realizar y desarrollar cambios de acuerdo con la nueva normatividad, fusionándose con las concentraciones educativas de básica primaria y preescolar ubicadas en la comuna dos de la ciudad de Girardot. Hoy conocidas como sedes: Atanasio Girardot, Antonia Santos, Puerto Montero, Puerto Mongui.
+          
+        <p class="text-muted" style="text-align: justify; line-height: 1.8;">
+        
+          Dicha comuna, tenía una sentida necesidad de dar continuidad a los estudios de básica secundaria a la población atendida, pues este lugar no se contaba con una institución de secundaria de carácter oficial que supliera esta demanda. Los directivos del Centro Auxiliar de Servicios Docentes CASD, los docentes de estas concentraciones y la administración municipal en común acuerdo deciden dar solución a esta problemática y resuelven crear en la sede Atanasio Girardot, la básica secundaria. En consecuencia, el departamento de Cundinamarca mediante Resolución No. 3355 de septiembre 30 de 2002, crea la Institución Educativa Departamental CASD. Una vez certificado el municipio de Girardot, se hace la gestión ante el mismo, y mediante decreto Por Decreto 016 de Enero 27 de 2.003, el Municipio de Girardot, define el nombre de la Institución. “MANUEL ELKIN PATARROYO”. Igualmente, la Resolución 845 de noviembre 25 de 2003 dio aprobación oficial al Plan de Estudios hasta el grado 10º, Actualmente rige la Resolución 333 de 2 septiembre de 2004 que aprobó el Plan de Estudios hasta el grado 11º. Dando la viabilidad para graduar Bachilleres Académicos con profundización en Ciencias Naturales. Como resultado del trabajo mancomunado de administrativos, docentes y directivos que promovieron el proyecto y quienes con tanto acierto se vincularon al mismo, hoy somos una Institución Educativa reconocida ante los diferentes estamentos de la sociedad Girardoteña.
+        </p>
+        <!-- Imagen de la fachada agregada aquí -->
+        <div class="text-center mt-4">
+         <img src="/assets/fachada-colegio.jpg" alt="Fachada IEMEP" class="img-fluid rounded-4 shadow-sm w-100" style="max-height: 400px; object-fit: cover;">
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-white" style="border-top: 5px solid #9c27b0 !important;">
+        <h4 class="fw-bold text-dark mb-3">Misión</h4>
+        <p class="text-muted" style="text-align: justify; line-height: 1.8;">
+          Contribuir a la cualificación del servicio público educativo, Formando personas integrales que respondan al compromiso social y cultural de la localidad, la región y la nación; a través de acciones tendientes a fortalecer las competencias en los niveles de preescolar, básica y media, dentro de ambientes democráticos, pluralistas y de exaltación a la libre iniciativa.
+        </p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm rounded-4 p-4 h-100 bg-white" style="border-top: 5px solid #ff5252 !important;">
+        <h4 class="fw-bold text-dark mb-3">Visión</h4>
+        <p class="text-muted" style="text-align: justify; line-height: 1.8;">
+          La institución educativa Manuel Elkin Patarroyo será un establecimiento multidimensional reconocido por la calidad académica, e investigativa, tecnológica y de formación en valores , en consecuencia, será un escenario de oportunidades hacia el logro de estrategias que permitan formar ciudadanos competentes y que respondan a las necesidades del entorno.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- VISTA 3: CALENDARIO ACADÉMICO -->
+<!-- ========================================== -->
+<div *ngIf="vistaActual === 'calendario'" class="container py-5 my-3">
+  
+  <div class="text-center mb-5">
+    <h2 class="fw-bold text-dark">Calendario Académico</h2>
+    <p class="text-muted">Festivos, fechas inicios y cierres de periodo.</p>
+  </div>
+
+  <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white">
+    <div class="row g-0">
+      
+      <!-- Columna Izquierda: El Calendario Dinámico -->
+      <div class="col-lg-8 p-4 p-md-5 border-end">
+        
+        <!-- Controles del Mes -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <button class="btn btn-link text-muted text-decoration-none fw-semibold" (click)="mesAnterior()">&lt; ANTERIOR</button>
+          <h4 class="fw-bold text-dark mb-0">{{ nombreMeses[mesMostrado.getMonth()] }} {{ mesMostrado.getFullYear() }}</h4>
+          <button class="btn btn-link text-danger text-decoration-none fw-semibold" (click)="mesSiguiente()">SIGUIENTE &gt;</button>
+        </div>
+
+        <!-- Días de la semana -->
+        <div class="row text-center fw-bold text-secondary mb-3">
+          <div class="col" style="width: 14.28%;">LU</div><div class="col" style="width: 14.28%;">MA</div><div class="col" style="width: 14.28%;">MI</div>
+          <div class="col" style="width: 14.28%;">JU</div><div class="col" style="width: 14.28%;">VI</div><div class="col" style="width: 14.28%;">SA</div><div class="col" style="width: 14.28%;">DO</div>
+        </div>
+
+        <!-- Cuadrícula Dinámica -->
+        <div class="d-flex flex-wrap text-center fw-semibold">
+          <div *ngFor="let dia of diasCalendario" class="py-3 d-flex flex-column align-items-center justify-content-center" style="width: 14.28%; height: 70px;">
+            
+            <ng-container *ngIf="dia.numero">
+              <!-- Día normal o Día actual (Esfera roja) -->
+              <div [ngClass]="dia.esHoy ? 'bg-danger text-white rounded-circle shadow-sm' : 'text-dark'" 
+                   class="d-flex justify-content-center align-items-center" 
+                   style="width: 40px; height: 40px; transition: 0.2s;">
+                {{ dia.numero }}
+              </div>
+              
+              <!-- Punto de evento debajo del número -->
+              <span *ngIf="dia.tieneEvento && !dia.esHoy" class="text-danger mt-1" style="font-size: 20px; line-height: 0;">•</span>
+            </ng-container>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Eventos del Mes -->
+      <div class="col-lg-4 p-4 p-md-5" style="background-color: #fafafa;">
+        <h5 class="fw-bold text-danger mb-4 text-center">Eventos de {{ nombreMeses[mesMostrado.getMonth()] | titlecase }}</h5>
+
+        <!-- Lista dinámica de eventos -->
+        <div *ngFor="let evento of eventosMes" class="d-flex align-items-center border-bottom pb-3 mb-3">
+          <div class="rounded-circle border text-{{ evento.color }} border-{{ evento.color }} d-flex justify-content-center align-items-center fw-bold me-3 bg-white flex-shrink-0" style="width: 50px; height: 50px;">
+            {{ evento.fecha | date:'dd' }}
+          </div>
+          <div>
+            <h6 class="fw-bold mb-0 text-dark">{{ evento.titulo }}</h6>
+            <small class="text-muted">{{ evento.desc }}</small>
+          </div>
+        </div>
+
+        <!-- Mensaje si no hay eventos en el mes -->
+        <div *ngIf="eventosMes.length === 0" class="text-center text-muted mt-5 py-4">
+          <p>No hay eventos programados para este mes.</p>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ========================================== -->
+<!-- FOOTER -->
+<!-- ========================================== -->
+<footer class="text-white py-4 mt-auto" style="background-color: #063e8ef8;">
+  <div class="container text-center mt-3">
+    <div class="row justify-content-center">
+      <div class="col-md-5 mb-3">
+        <h6 class="fw-bold text-warning mb-3">Contacto Directivo </h6> 
+        <p class="mb-1 small">📞 312 202 96 56 – (601) 888 4916</p>
+        <p class="mb-1 small">📧 institucional&#64;iemep.edu.co</p>
+      </div>
+      <div class="col-md-5 mb-3">
+        <h6 class="fw-bold text-warning mb-3">Sede Administrativa Principal</h6>
+        <p class="mb-1 small">📍 Km. 2 Vía Tocaima – Barrio Diamante</p>
+        <p class="mb-1 small">Girardot, Cundinamarca</p>
+      </div>
+    </div>
+  </div>
+</footer>

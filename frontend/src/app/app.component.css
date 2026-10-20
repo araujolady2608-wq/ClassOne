@@ -1,0 +1,10 @@
+/* Clase que Angular pondrá automáticamente al menú seleccionado */
+.menu-activo {
+    background-color: #9391de !important; /* Fondo Lila pastel */
+    color: #2739b0 !important; /* Texto morado oscuro para que se lea perfecto */
+    font-weight: 700 !important; /* Texto en negrita */
+    border-radius: 8px !important; /* Bordes redondeados suaves */
+    opacity: 1 !important; /* Quita la transparencia */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; /* Pequeña sombra elegante */
+    transition: all 0.3s ease; /* Animación suave */
+}

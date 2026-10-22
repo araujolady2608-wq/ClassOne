@@ -1,13 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PersonService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://127.0.0.1:8000/api/persons/';
+  
+  // URL corregida y enlazada al entorno
+  private baseUrl = environment.apiUrl + 'persons/';
 
   // Obtener la lista (con paginación)
   getPersons(url: string = this.baseUrl) {

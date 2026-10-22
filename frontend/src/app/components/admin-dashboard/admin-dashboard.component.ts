@@ -37,7 +37,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   cargarDatosReales(): void {
-    // La URL exacta que acabamos de crear en Django
+    // URL 
     const url = 'http://127.0.0.1:8000/api/dashboard-stats/';
     
     this.http.get<any>(url).subscribe({

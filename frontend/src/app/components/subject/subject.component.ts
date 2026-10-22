@@ -151,10 +151,18 @@ export class SubjectComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  guardarNuevaMateria(): void {
-    console.log('Materia a guardar:', this.nuevaMateria);
-    alert(`¡Listo! Se guardará la materia: ${this.nuevaMateria.name_subject}`);
-    this.cerrarModalCrear();
+  async guardarNuevaMateria(): Promise<void> {
+    try {
+      // Envía los datos al servidor real
+      await this.subjectService.createSubject(this.nuevaMateria);
+      alert('¡Materia registrada exitosamente en el servidor!');
+      this.cerrarModalCrear();
+      // Recarga la tabla para que la materia nueva aparezca inmediatamente
+      await this.loadSubjects(); 
+    } catch (error) {
+      console.error('Error al guardar la materia:', error);
+      alert('Hubo un error al guardar. Revisa la consola.');
+    }
   }
 
   abrirModalEditar(item: any): void {
@@ -168,10 +176,18 @@ export class SubjectComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  guardarEdicionMateria(): void {
-    console.log('Materia a actualizar:', this.materiaAEditar);
-    alert(`¡Cambios listos para enviarse a Django para la materia ID ${this.materiaAEditar.id}!`);
-    this.cerrarModalEditar();
+  async guardarEdicionMateria(): Promise<void> {
+    try {
+      // Envía la actualización al servidor real
+      await this.subjectService.updateSubject(this.materiaAEditar.id, this.materiaAEditar);
+      alert('¡Materia actualizada con éxito!');
+      this.cerrarModalEditar();
+      // Recarga la tabla
+      await this.loadSubjects();
+    } catch (error) {
+      console.error('Error al actualizar la materia:', error);
+      alert('Hubo un error al actualizar.');
+    }
   }
 
   // ==========================================

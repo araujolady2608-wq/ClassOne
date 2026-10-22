@@ -1,14 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SchoolAdministratorService {
   private http = inject(HttpClient);
-  // URL corregida (sin el schoolschool)
-  private baseUrl = 'http://127.0.0.1:8000/api/school-administrators/';
+  
+  // URL corregida y enlazada al entorno
+  private baseUrl = environment.apiUrl + 'school-administrators/';
 
   // Obtener la lista (con paginación)
   getAdministrators(url: string = this.baseUrl) {

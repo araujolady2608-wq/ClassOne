@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { environment } from '../../environments/environment';
 
 // Credenciales
 export interface LoginCredentials {
@@ -6,8 +7,8 @@ export interface LoginCredentials {
   password: string;
 }
 
-// URL del endpoint de login
-const API_URL = 'http://127.0.0.1:8000/api/token/'; 
+// RUTA ENLAZADA AL ENTORNO (Sirve tanto para local como para el servidor)
+const API_URL = environment.apiUrl + 'token/';
 
 export class AuthService {
   

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import axios from 'axios';
+import { environment } from '../../environments/environment';
 
 export interface Subject {
   id?: number;
@@ -11,8 +12,8 @@ export interface Subject {
   providedIn: 'root'
 })
 export class SubjectService {
-  // URL de tu API en Django
-  private apiUrl = 'http://127.0.0.1:8000/api/subjects/';
+  // URL actualizada usando el entorno
+  private apiUrl = environment.apiUrl + 'subjects/';
 
   constructor() {}
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import axios from 'axios';
+import { environment } from '../../environments/environment';
 
 // Interfaz que coincide con el modelo Schedule de Django
 export interface Schedule {
@@ -15,8 +16,8 @@ export interface Schedule {
   providedIn: 'root'
 })
 export class ScheduleService {
-  // Endpoint de Django 
-  private apiUrl = 'http://127.0.0.1:8000/api/schedules/';
+  // Endpoint de Django enlazado al entorno
+  private apiUrl = environment.apiUrl + 'schedules/';
 
   constructor() {}
 
